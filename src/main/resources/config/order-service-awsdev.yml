@@ -1,0 +1,90 @@
+example.property: DEV
+server:
+  port: 7072
+spring:
+  datasource:
+    url: jdbc:postgresql://bakery-aws.cuwpjkbf7uis.us-east-2.rds.amazonaws.com:5432/bakery-aws
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+  zipkin:
+    baseUrl: ${ZIPKIN_SERVER}
+  cloud:
+    discovery:
+      enabled: true
+#    Messaging configuration ( consumer )
+    function:
+      definition: cacheEvictionSink
+    stream:
+      bindings:
+#        channel name for sink built based on the function definition above
+        cacheEvictionSink-in-0:
+#          Topic to consume from
+          destination: custChangeTopic
+          group: orderGroup
+      kafka:
+        binder:
+#          location of the messaging broker defined within docker compose.
+          brokers: ${BROKER_BINDER}
+redis:
+  server: ${REDIS_HOSTNAME}
+  port: ${REDIS_PORT}
+eureka:
+  instance:
+    #    register IP address of the service rather than the server hostname
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+#      should read the value from EUREKA_URI
+      defaultZone: ${EUREKA_URI:http://default:8070/eureka/}
+
+management.health.circuitbreakers.enabled: true
+resilience4j:
+  circuitbreaker:
+    instances:
+#      Configuration when invoking customer service from orders service.
+      customerService:
+#        indicates whether to expose the configuration over actuators health endpoint
+        registerHealthIndicator: true
+        ringBufferSizeInClosedState: 5
+        ringBufferSizeInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+#        failure rate threshold percentage
+        failureRateThreshold: 50
+#        List of exception that should be recorded as failures.
+        recordExceptions:
+          - java.util.concurrent.TimeoutException
+      orderService:
+        #        indicates whether to expose the configuration over actuators health endpoint
+        registerHealthIndicator: true
+        ringBufferSizeInClosedState: 6
+        ringBufferSizeInHalfOpenState: 4
+        waitDurationInOpenState: 10s
+        #        failure rate threshold percentage
+        failureRateThreshold: 60
+#        By default all exceptions are treated as failures.
+
+#  Bulk Head configuration
+  thread-pool-bulkhead:
+    instances:
+      bulkCustomerService:
+        maxThreadPoolSize: 5
+        coreThreadPoolSize: 3
+        queueCapacity: 10
+#        Maximum time for an idle thread to wait before its terminated.
+        keepAliveDuration: 20ms
+
+# Retry Pattern Configuration
+  retry:
+    instances:
+      retryCustomerService:
+        maxRetryAttempts: 5
+#        Wait duration between retries
+        waitDuration: 10000
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

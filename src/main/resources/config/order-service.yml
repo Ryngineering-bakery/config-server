@@ -1,0 +1,38 @@
+example.property: DEFAULT
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  database:
+    driverClassName: org.postgresql.Driver
+  datasource:
+    testWhileIdle: true
+    platform: postgres
+    validationQuery: SELECT 1
+    driverClassName: org.postgresql.Driver
+management:
+  endpoints:
+    enabled-by-default: true
+    health:
+      show-details: always
+    web:
+      exposure:
+        include: "*"
+#        Micrometer tracing .. trace all calls
+  tracing:
+    sampling:
+      probability: 1.0
+eureka:
+  instance:
+    #    register IP address of the service rather than the server hostname
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/

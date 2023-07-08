@@ -1,0 +1,17 @@
+server:
+  port: 8070
+eureka:
+  instance:
+    hostname: localhost
+  client:
+#    do not register itself to eureka instance
+    registerWithEureka: false
+#    do not cache service urls locally
+    fetchRegistry: false
+    serviceUrl:
+#      service url for clients to use
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+#    wait 5 min before the server starts to take request. usually it takes 10 seconds for services to
+#    register with discovery agent. agent requires 3 successful heart beats..
+    waitTimeInMsWhenSynchEmpty: 5

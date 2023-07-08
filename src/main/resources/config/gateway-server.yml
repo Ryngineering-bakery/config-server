@@ -1,0 +1,61 @@
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"
+#  Trace all call and report to zipkin.
+  tracing:
+    sampling:
+      probability: 1.0
+eureka:
+  instance:
+    #    register IP address of the service rather than the server hostname
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+spring:
+  cloud:
+    gateway:
+      discovery:
+#        enables gateway to create routes based on services registered with service gateway
+#        Automatic mapping
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+#          Manual mapping ( check documentation if needed )
+#        routes:
+#          - id: customer-service
+#            uri: lb://customer-service
+#
+#            predicates:
+#              - Path=/customer/**
+#
+#            filters:
+#              - RewritePath=/customer/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

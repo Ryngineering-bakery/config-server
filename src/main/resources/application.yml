@@ -1,0 +1,33 @@
+# Since spring 2.4 and above / spring cloud 2020.* and above , bootstrap context is disabled by default. ll of the boostrap properties are defines
+# within applicaiton.yml file and are usually defined as spring.cloud.config.* values
+
+server:
+  port: 8071
+spring:
+  application:
+    name: config-server
+  profiles:
+#    TODO : should be read from environment or docker file.
+    active:
+      - native
+#      - vault
+  cloud:
+    config:
+      server:
+
+        #        local configuration - can be either a classpath or location in the filesystem.
+#         profile name should be "native" for laoding files friom local system
+          native:
+            search-locations: classpath:/config
+#          vault:
+#              port: 8200
+#              host: 127.0.0.1
+#              kvVersion: 2
+#              skip-ssl-validation: true
+#              scheme: http
+#              authentication: TOKEN
+#              token: myroot
+#              backend: banking_app
+logging:
+  level:
+    org.springframework.web: TRACE

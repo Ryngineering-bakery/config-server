@@ -1,0 +1,39 @@
+example.property: DEV
+server:
+  port: 9090
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bakery_dev
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+  zipkin:
+    baseUrl: ${ZIPKIN_SERVER}
+  cloud:
+    discovery:
+      enabled: true
+#      Messaging Configuration
+    stream:
+      bindings:
+#        Channel name
+        output-out-0:
+#          Message broker queue name
+          destination: custChangeTopic
+      kafka:
+        binder:
+          brokers: ${BROKER_BINDER}
+
+eureka:
+  instance:
+    #    register IP address of the service rather than the server hostname
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://default:8070/eureka/}
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
